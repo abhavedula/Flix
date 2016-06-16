@@ -22,7 +22,7 @@ The following **optional** features are implemented:
 - [x] User can view the large movie poster by tapping on a cell.
 - [x] For the large poster, load the low resolution image first and then switch to the high resolution image when complete.
 - [x] Customize the selection effect of the cell.
-- [ ] Customize the navigation bar.
+- [x] Customize the navigation bar.
 - [x] Customize the UI.
 
 The following **additional** features are implemented:
