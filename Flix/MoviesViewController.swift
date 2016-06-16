@@ -10,17 +10,28 @@ import UIKit
 import AFNetworking
 import MBProgressHUD
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     var movies: [NSDictionary]?
+    
+    var filteredMovies: [NSDictionary]?
+    
+    var data: [String]!
+    
+    var filteredData: [String]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.dataSource = self
         tableView.delegate = self
+        searchBar.delegate = self
+        
+        filteredMovies = movies
         
         
         
@@ -142,26 +153,81 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         let image = movie["poster_path"] as! String
         
-        let imageUrl = NSURL(string: baseUrl + image)
+        let imageUrl = NSURLRequest(URL: NSURL(string: baseUrl + image)!)
         
-        cell.posterView.setImageWithURL(imageUrl!)
-
+        //cell.posterView.setImageWithURL(imageUrl!)
+        
+        cell.posterView.setImageWithURLRequest(
+            imageUrl,
+            placeholderImage: nil,
+            success: { (imageUrl, imageResponse, image) -> Void in
+                
+                // imageResponse will be nil if the image is cached
+                if imageResponse != nil {
+                    cell.posterView.alpha = 0.0
+                    cell.posterView.image = image
+                    UIView.animateWithDuration(1, animations: { () -> Void in
+                        cell.posterView.alpha = 1.0
+                    })
+                } else {
+                    cell.posterView.image = image
+                }
+            },
+            failure: { (imageUrl, imageResponse, error) -> Void in
+                // do something for the failure condition
+        })
         return cell
+    }
+    
 
+    
+    
+    // This method updates filteredData based on the text in the Search Box
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
         
+
+        for i in 0 ..< movies!.count {
+            data.append(movies![i]["title"] as! String)
+            
+        }
+        print(data)
+
+
+        // When there is no text, filteredData is the same as the original data
+        if searchText.isEmpty {
+            filteredData = data
+            filteredMovies = movies
+        } else {
+            // The user has entered text into the search box
+            // Use the filter method to iterate over all items in the data array
+            // For each item, return true if the item should be included and false if the
+            // item should NOT be included
+            filteredData = data.filter({(dataItem: String) -> Bool in
+                // If dataItem matches the searchText, return true to include it
+                if dataItem.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil {
+                    return true
+                } else {
+                    return false
+                }
+            })
+        }
+        /*
+        for var i = 0; i < filteredData!.count ; i += 1 {
+            for var j = 0; j < movies!.count ; j += 1 {
+                if (movies![j]["title"] as! String) == filteredData[i] {
+                    filteredMovies?.append(movies![j])
+                }
+            }
+            
+        }
+        */
+        print(filteredData)
+        tableView.reloadData()
     }
-    
-    
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
+    
+    
+    
+
+
+
