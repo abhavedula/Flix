@@ -56,7 +56,7 @@ class DetailViewController: UIViewController {
                     dispatch_async(dispatch_get_main_queue()){
                     
                     
-                    self.moviePoster.alpha = 1.0
+                    self.moviePoster.alpha = 0.3
                     
                 }}, completion: { (sucess) -> Void in
                         

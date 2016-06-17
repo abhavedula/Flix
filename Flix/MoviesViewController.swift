@@ -79,15 +79,23 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         // Do any additional setup after loading the view.
         
         
-        if let navigationBar = navigationController?.navigationBar {
-            navigationBar.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.1)
-                navigationBar.titleTextAttributes = [
-                NSFontAttributeName : UIFont.boldSystemFontOfSize(28),
-                NSForegroundColorAttributeName : UIColor(red: 255, green: 255, blue: 255, alpha: 1),
-            ]
-           
-                    }
         
+        
+        self.navigationItem.title = "Flix"
+        if let navigationBar = navigationController?.navigationBar {
+            navigationBar.backgroundColor = UIColor(red: 0, green: 0.0, blue: 0.0, alpha: 0.1)
+            navigationBar.tintColor = UIColor(red: 255, green: 0.0, blue: 0.0, alpha: 1)
+            
+            let shadow = NSShadow()
+            shadow.shadowColor = UIColor.grayColor().colorWithAlphaComponent(0.5)
+            shadow.shadowOffset = CGSizeMake(2, 2);
+            shadow.shadowBlurRadius = 4;
+            navigationBar.titleTextAttributes = [
+                NSFontAttributeName : UIFont.boldSystemFontOfSize(22),
+                NSForegroundColorAttributeName : UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.8),
+                NSShadowAttributeName : shadow
+            ]
+        }
         
     }
     
