@@ -32,6 +32,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var selectedBackgroundView: UIView?
     
+    var rating: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -159,14 +161,16 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         cell.titleLabel.text = movieTitle
         
         overview = movie["overview"] as! String
-
-        cell.overviewLabel.text = overview
         
         let baseUrl = "http://image.tmdb.org/t/p/w500/"
         
         let image = movie["poster_path"] as! String
                 
         let imageUrlRequest = NSURLRequest(URL: NSURL(string: baseUrl + image)!)
+        
+        rating = String(movie["vote_average"]!)
+        
+        cell.ratingLabel.text = "Viewer rating: \(rating)"
         
 //        imageUrl = NSURL(string: baseUrl + image)
 //        
