@@ -11,6 +11,16 @@ import AFNetworking
 import MBProgressHUD
 
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
+    
+    var movieTitle: String!
+    
+    var imageUrl: NSURL!
+    
+    var smallImageUrl: NSURL!
+    
+    var largeImageUrl: NSURL!
+        
+    var overview: String!
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -20,9 +30,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var filteredMovies: [NSDictionary]?
     
-    var data: [String]!
-    
-    var filteredData: [String]!
+    var selectedBackgroundView: UIView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,8 +38,6 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.dataSource = self
         tableView.delegate = self
         searchBar.delegate = self
-        
-        filteredMovies = movies
         
         
         
@@ -50,35 +56,39 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         MBProgressHUD.showHUDAddedTo(self.view, animated: true)
         
-        let task: NSURLSessionDataTask = session.dataTaskWithRequest(request,
-                                                                     completionHandler: { (dataOrNil, response, error) in
-                                                                        if let data = dataOrNil {
-                                                                            if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
-                                                                                data, options:[]) as? NSDictionary {
-                                                                                print("response: \(responseDictionary)")
-                                                                                
-                                                                                self.movies = responseDictionary["results"] as! [NSDictionary]
-                                                                                self.tableView.reloadData()
-                                                                                
-                                                                                
-                                                                            }
-                                                                        }
-                                                                        MBProgressHUD.hideHUDForView(self.view, animated: true)
-        })
-        task.resume()
-        
-        
-        
+        let task: NSURLSessionDataTask = session.dataTaskWithRequest(request, completionHandler: { (dataOrNil, response, error) in
+        if let data = dataOrNil {
+            if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(data, options:[]) as? NSDictionary {
+                print("response: \(responseDictionary)")
+                self.movies = (responseDictionary["results"] as! [NSDictionary])
+                self.filteredMovies = self.movies
 
+                self.tableView.reloadData()
+             }
+        }
+        
+        MBProgressHUD.hideHUDForView(self.view, animated: true)
+        
+        });
+        task.resume()
         
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
         tableView.insertSubview(refreshControl, atIndex: 0)
         
-        
-        
-
         // Do any additional setup after loading the view.
+        
+        
+        if let navigationBar = navigationController?.navigationBar {
+            navigationBar.backgroundColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.1)
+                navigationBar.titleTextAttributes = [
+                NSFontAttributeName : UIFont.boldSystemFontOfSize(28),
+                NSForegroundColorAttributeName : UIColor(red: 255, green: 255, blue: 255, alpha: 1),
+            ]
+           
+                    }
+        
+        
     }
     
     func refreshControlAction(refreshControl: UIRefreshControl) {
@@ -101,20 +111,15 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         )
         
         
-        let task: NSURLSessionDataTask = session.dataTaskWithRequest(request,
-                                                                     completionHandler: { (dataOrNil, response, error) in
-                                                                        if let data = dataOrNil {
-                                                                            if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
-                                                                                data, options:[]) as? NSDictionary {
-                                                                                print("response: \(responseDictionary)")
-                                                                                
-                                                                                self.movies = responseDictionary["results"] as! [NSDictionary]
-                                                                                self.tableView.reloadData()
-                                                                                
-                                                                                refreshControl.endRefreshing()
-                                                                                
-                                                                            }
-                                                                        }
+        let task: NSURLSessionDataTask = session.dataTaskWithRequest(request, completionHandler: { (dataOrNil, response, error) in
+            if let data = dataOrNil {
+                if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(data, options:[]) as? NSDictionary {
+                    print("response: \(responseDictionary)")
+                    self.movies = responseDictionary["results"] as? [NSDictionary]
+                    self.tableView.reloadData()
+                    refreshControl.endRefreshing()
+                }
+            }
         })
         task.resume()
 
@@ -129,8 +134,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let movies = movies {
-            return movies.count
+        if let filteredMovies = filteredMovies {
+            return filteredMovies.count
         }
         else {
             return 0
@@ -140,94 +145,115 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MovieCell", forIndexPath: indexPath) as! MovieCell
         
-        let movie = movies![indexPath.row]
-        let title = movie["title"] as! String
+        let movie = filteredMovies![indexPath.row]
+        movieTitle = movie["title"] as! String
         
-        cell.titleLabel.text = title
+        cell.titleLabel.text = movieTitle
         
-        let overview = movie["overview"] as! String
+        overview = movie["overview"] as! String
 
         cell.overviewLabel.text = overview
         
         let baseUrl = "http://image.tmdb.org/t/p/w500/"
         
         let image = movie["poster_path"] as! String
+                
+        let imageUrlRequest = NSURLRequest(URL: NSURL(string: baseUrl + image)!)
         
-        let imageUrl = NSURLRequest(URL: NSURL(string: baseUrl + image)!)
-        
-        //cell.posterView.setImageWithURL(imageUrl!)
+//        imageUrl = NSURL(string: baseUrl + image)
+//        
+//        cell.posterView.setImageWithURL(imageUrl)
         
         cell.posterView.setImageWithURLRequest(
-            imageUrl,
+            imageUrlRequest,
             placeholderImage: nil,
-            success: { (imageUrl, imageResponse, image) -> Void in
+            success: { (imageUrlRequest, imageResponse, image) -> Void in
                 
                 // imageResponse will be nil if the image is cached
-                if imageResponse != nil {
-                    cell.posterView.alpha = 0.0
-                    cell.posterView.image = image
-                    UIView.animateWithDuration(1, animations: { () -> Void in
-                        cell.posterView.alpha = 1.0
-                    })
-                } else {
-                    cell.posterView.image = image
+                dispatch_async(dispatch_get_main_queue()){
+                    if imageResponse != nil {
+                        cell.posterView.alpha = 0.0
+                        cell.posterView.image = image
+                        UIView.animateWithDuration(0.3, animations: { () -> Void in
+                            dispatch_async(dispatch_get_main_queue()){
+                            cell.posterView.alpha = 1.0
+                            }})
+                    } else {
+                        cell.posterView.image = image
+                    }
                 }
             },
-            failure: { (imageUrl, imageResponse, error) -> Void in
+            failure: { (imageUrlRequest, imageResponse, error) -> Void in
                 // do something for the failure condition
         })
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.redColor()
+        cell.selectedBackgroundView = backgroundView
+ 
         return cell
     }
     
 
-    
-    
     // This method updates filteredData based on the text in the Search Box
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        
-
-        for i in 0 ..< movies!.count {
-            data.append(movies![i]["title"] as! String)
-            
-        }
-        print(data)
-
-
         // When there is no text, filteredData is the same as the original data
         if searchText.isEmpty {
-            filteredData = data
             filteredMovies = movies
         } else {
             // The user has entered text into the search box
             // Use the filter method to iterate over all items in the data array
             // For each item, return true if the item should be included and false if the
             // item should NOT be included
-            filteredData = data.filter({(dataItem: String) -> Bool in
+            filteredMovies = movies!.filter({(dataItem: NSDictionary) -> Bool in
                 // If dataItem matches the searchText, return true to include it
-                if dataItem.rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil {
+                if (dataItem["title"] as! String ).rangeOfString(searchText, options: .CaseInsensitiveSearch) != nil {
                     return true
                 } else {
                     return false
                 }
             })
         }
-        /*
-        for var i = 0; i < filteredData!.count ; i += 1 {
-            for var j = 0; j < movies!.count ; j += 1 {
-                if (movies![j]["title"] as! String) == filteredData[i] {
-                    filteredMovies?.append(movies![j])
-                }
-            }
-            
-        }
-        */
-        print(filteredData)
         tableView.reloadData()
     }
-}
+
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        let indexPath = tableView.indexPathForCell(sender as! UITableViewCell)
+        
+        let movie = movies![indexPath!.row]
+        movieTitle = movie["title"] as! String
+ 
+        let detailViewController = segue.destinationViewController as! DetailViewController
+        
+        let baseUrlSmall = "https://image.tmdb.org/t/p/w45"
+        
+        let baseUrlLarge = "https://image.tmdb.org/t/p/original"
+        
+        let image = movie["poster_path"] as! String
+        
+        smallImageUrl = NSURL(string: baseUrlSmall + image)
+        
+        largeImageUrl = NSURL(string: baseUrlLarge + image)
+
+        
+        overview = movie["overview"] as! String
+        
+        detailViewController.movieTitle = self.movieTitle
+        detailViewController.smallImageUrl = self.smallImageUrl
+        detailViewController.largeImageUrl = self.largeImageUrl
+        detailViewController.overview = self.overview
+        
+        
+    }
     
     
     
+   }
+
+    
+
 
 
 

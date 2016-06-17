@@ -13,6 +13,7 @@
 		A54208A41D11F1DE009D4FDC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A54208A21D11F1DE009D4FDC /* LaunchScreen.storyboard */; };
 		A54208AC1D11F218009D4FDC /* MoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54208AB1D11F218009D4FDC /* MoviesViewController.swift */; };
 		A54208AF1D11FB0A009D4FDC /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54208AE1D11FB0A009D4FDC /* MovieCell.swift */; };
+		A54FB04C1D133F5400B04212 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54FB04B1D133F5400B04212 /* DetailViewController.swift */; };
 		FD2FC18E16397E911C880357 /* Pods_Flix.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 550CFB931B8F011056B265BA /* Pods_Flix.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 		A54208A51D11F1DE009D4FDC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A54208AB1D11F218009D4FDC /* MoviesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoviesViewController.swift; sourceTree = "<group>"; };
 		A54208AE1D11FB0A009D4FDC /* MovieCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieCell.swift; sourceTree = "<group>"; };
+		A54FB04B1D133F5400B04212 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				A54208AB1D11F218009D4FDC /* MoviesViewController.swift */,
+				A54FB04B1D133F5400B04212 /* DetailViewController.swift */,
 			);
 			name = "View Controller";
 			sourceTree = "<group>";
@@ -232,6 +235,7 @@
 				A542089A1D11F1DE009D4FDC /* AppDelegate.swift in Sources */,
 				A54208AC1D11F218009D4FDC /* MoviesViewController.swift in Sources */,
 				A54208AF1D11FB0A009D4FDC /* MovieCell.swift in Sources */,
+				A54FB04C1D133F5400B04212 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
