@@ -34,6 +34,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var rating: String!
     
+    var movieId: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -86,15 +88,15 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         self.navigationItem.title = "Flix"
         if let navigationBar = navigationController?.navigationBar {
             navigationBar.backgroundColor = UIColor(red: 0, green: 0.0, blue: 0.0, alpha: 0.1)
-            navigationBar.tintColor = UIColor(red: 255, green: 0.0, blue: 0.0, alpha: 1)
+            navigationBar.tintColor = UIColor(red: 255, green: 0.0, blue: 0.0, alpha: 0.1)
             
             let shadow = NSShadow()
             shadow.shadowColor = UIColor.grayColor().colorWithAlphaComponent(0.5)
             shadow.shadowOffset = CGSizeMake(2, 2);
             shadow.shadowBlurRadius = 4;
             navigationBar.titleTextAttributes = [
-                NSFontAttributeName : UIFont.boldSystemFontOfSize(22),
-                NSForegroundColorAttributeName : UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.8),
+                NSFontAttributeName : UIFont.boldSystemFontOfSize(24),
+                NSForegroundColorAttributeName : UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1),
                 NSShadowAttributeName : shadow
             ]
         }
@@ -182,18 +184,17 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
             success: { (imageUrlRequest, imageResponse, image) -> Void in
                 
                 // imageResponse will be nil if the image is cached
-                dispatch_async(dispatch_get_main_queue()){
-                    if imageResponse != nil {
+                                    if imageResponse != nil {
                         cell.posterView.alpha = 0.0
                         cell.posterView.image = image
                         UIView.animateWithDuration(0.3, animations: { () -> Void in
-                            dispatch_async(dispatch_get_main_queue()){
+                            
                             cell.posterView.alpha = 1.0
-                            }})
+                            })
                     } else {
                         cell.posterView.image = image
                     }
-                }
+                
             },
             failure: { (imageUrlRequest, imageResponse, error) -> Void in
                 // do something for the failure condition
@@ -234,7 +235,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         let indexPath = tableView.indexPathForCell(sender as! UITableViewCell)
         
-        let movie = movies![indexPath!.row]
+        let movie = filteredMovies![indexPath!.row]
         movieTitle = movie["title"] as! String
  
         let detailViewController = segue.destinationViewController as! DetailViewController
@@ -248,16 +249,18 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         smallImageUrl = NSURL(string: baseUrlSmall + image)
         
         largeImageUrl = NSURL(string: baseUrlLarge + image)
-
         
+        movieId = String(movie["id"]!)
+
         overview = movie["overview"] as! String
         
         detailViewController.movieTitle = self.movieTitle
         detailViewController.smallImageUrl = self.smallImageUrl
         detailViewController.largeImageUrl = self.largeImageUrl
         detailViewController.overview = self.overview
+        detailViewController.movieId = self.movieId
         
-        
+        print(movieId)
     }
     
     
