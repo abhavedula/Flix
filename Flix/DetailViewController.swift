@@ -8,6 +8,8 @@
 
 import UIKit
 import AFNetworking
+import MBProgressHUD
+
 
 class DetailViewController: UIViewController {
     

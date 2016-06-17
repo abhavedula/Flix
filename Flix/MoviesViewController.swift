@@ -10,6 +10,8 @@ import UIKit
 import AFNetworking
 import MBProgressHUD
 
+
+
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     
     var movieTitle: String!
@@ -88,7 +90,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         self.navigationItem.title = "Flix"
         if let navigationBar = navigationController?.navigationBar {
             navigationBar.backgroundColor = UIColor(red: 0, green: 0.0, blue: 0.0, alpha: 0.1)
-            navigationBar.tintColor = UIColor(red: 255, green: 0.0, blue: 0.0, alpha: 0.1)
+            navigationBar.tintColor = UIColor(red: 255, green: 0.0, blue: 0.0, alpha: 0.8)
             
             let shadow = NSShadow()
             shadow.shadowColor = UIColor.grayColor().colorWithAlphaComponent(0.5)
